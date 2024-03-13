@@ -6,8 +6,9 @@ import com.advpro.profiling.tutorial.repository.StudentCourseRepository;
 import com.advpro.profiling.tutorial.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,11 +30,9 @@ public class StudentService {
     }
 
     public Optional<Student> findStudentWithHighestGpa() {
-        List<Student> students = studentRepository.findAll();
-        Optional<Student> highestGpaStudent = null;
-        highestGpaStudent = students.stream()
-                .max(Comparator.comparingDouble(Student::getGpa));
-        return highestGpaStudent;
+        Pageable limit = PageRequest.of(0, 1);
+        List<Student> students = studentRepository.findAllOrderByGpaDesc(limit);
+        return Optional.ofNullable(students.get(0));
     }
 
     public String joinStudentNames() {
